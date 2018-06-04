@@ -2,14 +2,9 @@ source 'https://rubygems.org'
 
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-group :development, :test do
-  # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem 'rails', '4.2.6'
-end
-group :production, :test do
-  # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem 'rails', '4.2.10'
-end
+
+gem 'rails', '4.2.6'
+
 # Use sqlite3 as the database for Active Record
 
 # Use SCSS for stylesheets
