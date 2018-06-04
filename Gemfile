@@ -15,6 +15,7 @@ gem 'coffee-rails', '~> 4.1.0'
 # gem 'therubyracer', platforms: :ruby
 gem 'bootstrap', '~> 4.0.0.alpha6'
 gem 'haml'
+gem 'pg'
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
