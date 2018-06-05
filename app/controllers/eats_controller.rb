@@ -717,8 +717,8 @@ class EatsController < ApplicationController
 			#events = events.where(:start => date.beginning_of_day..date.end_of_day, :end => date.beginning_of_day..date.end_of_day)
 			starts_on_date = events.where(:start => date.beginning_of_day..date.end_of_day)
 			ends_on_date = events.where(:end => date.beginning_of_day..date.end_of_day)
-			between_date = events.where("start < ?", date.beginning_of_day)
-			between_date = between_date.where("end > ? ", date.end_of_day)
+			between_date = events.where(:start => DateTime.new(0,1,1)..date.beginning_of_day)
+			between_date = between_date.where(:end => date.end_of_day..DateTime.new(10000,1,1))
 			(starts_on_date + ends_on_date + between_date).uniq
 		end
 	end
