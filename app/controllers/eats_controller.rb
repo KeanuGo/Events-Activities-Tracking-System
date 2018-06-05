@@ -713,8 +713,12 @@ class EatsController < ApplicationController
 			events = events.where("(start BETWEEN ? AND ?) OR (end BETWEEN ? AND ?) OR ((start <= ?) AND (end >= ?))", date.beginning_of_week-1, date.end_of_week-1, date.beginning_of_week-1, date.end_of_week-1, date.beginning_of_week-1, date.end_of_week-1)
 			#events = events.where(:start => date.beginning_of_week-1..date.end_of_week-1, :end => date.beginning_of_week-1..date.end_of_week-1)
 		elsif(view_type == "day")
-			events = events.where("(start BETWEEN ? AND ?) OR (end BETWEEN ? AND ?) OR ((start <= ?) AND (end >= ?))", date.beginning_of_day, date.end_of_day, date.beginning_of_day, date.end_of_day, date.beginning_of_day, date.end_of_day)
+			#events = events.where("(start BETWEEN ? AND ?) OR (end BETWEEN ? AND ?) OR ((start <= ?) AND (end >= ?))", date.beginning_of_day, date.end_of_day, date.beginning_of_day, date.end_of_day, date.beginning_of_day, date.end_of_day)
 			#events = events.where(:start => date.beginning_of_day..date.end_of_day, :end => date.beginning_of_day..date.end_of_day)
+			starts_on_date = events.where(:start => date.beginning_of_day..date.end_of_day)
+			ends_on_date = events.where(:end => date.beginning_of_day..date.end_of_day)
+			#between_date = events.where(:start => date.beginning_of_day, :end => date.end_of_day)
+			(starts_on_date + ends_on_date).uniq
 		end
 	end
 	
