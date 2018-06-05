@@ -426,17 +426,17 @@ class EatsController < ApplicationController
 					g_id = id.split("_")[1]
 					group = Group.find(g_id)
 					group_events = Event.where(:is_group_event => true, :group_id => g_id)
-					group_events = filterDateRange(group_events, params[:view_type], @date)
 					if (GroupMember.where(:accounts_id => session[:account]["id"], :group_id => g_id).empty?)
 						group_events = group_events.where(:public => true)
 					end
 					tagged_group_events = GroupTag.where(:group_id => g_id)
 					tagged_group_events = Event.where(:id => tagged_group_events.pluck(:events_id))
-					tagged_group_events = filterDateRange(tagged_group_events, params[:view_type], @date)
 					if (GroupMember.where(:accounts_id => session[:account]["id"], :group_id => g_id).empty?)
 						tagged_group_events = tagged_group_events.where(:public => true)
 					end
 					#group_events = addTags(group_events)
+					group_events = filterDateRange(group_events, params[:view_type], @date)
+					tagged_group_events = filterDateRange(tagged_group_events, params[:view_type], @date)
 					@events[group.name] = (group_events + tagged_group_events).uniq
 				else
 					user = Account.find(id)
@@ -444,19 +444,18 @@ class EatsController < ApplicationController
 					if(!(id.to_s == session[:account]["id"].to_s))
 						user_created_events = user_created_events.where(:public => true)
 					end
-					user_created_events = filterDateRange(user_created_events, params[:view_type], @date)
 					user_created_events = addTags(user_created_events)
 					tag_list = Tag.where(:accounts_id => id)
 					tagged_events = Event.where(:id => tag_list)
 					if(!(id.to_s == session[:account]["id"].to_s))
 						tagged_events = tagged_events.where(:public => true)
 					end
-					tagged_events = filterDateRange(tagged_events, params[:view_type], @date)
 					#tagged_events = addTags(tagged_events)
 					group_events = GroupMember.where(:accounts_id => id)
 					group_events = Event.where(:group_id => group_events.select(:group_id))
 					groups = GroupMember.where(:accounts_id => session[:account]["id"]).select(:id).pluck;
-					
+					user_created_events = filterDateRange(user_created_events, params[:view_type], @date)
+					tagged_events = filterDateRange(tagged_events, params[:view_type], @date)
 					group_events = filterDateRange(group_events, params[:view_type], @date)
 					#group_events = addTags(group_events)
 					user_event = user_created_events + tagged_events + group_events
@@ -707,11 +706,21 @@ class EatsController < ApplicationController
 	
 	def filterDateRange(events ,view_type, date)
 		if(view_type == "month")
-			events = events.where("(start BETWEEN ? AND ?) OR (end BETWEEN ? AND ?) OR ((start <= ?) AND (end >= ?))", date.beginning_of_month, date.end_of_month, date.beginning_of_month, date.end_of_month, date.beginning_of_month, date.end_of_month)
+			#events = events.where("(start BETWEEN ? AND ?) OR (end BETWEEN ? AND ?) OR ((start <= ?) AND (end >= ?))", date.beginning_of_month, date.end_of_month, date.beginning_of_month, date.end_of_month, date.beginning_of_month, date.end_of_month)
 			#events = events.where(:start => date.beginning_of_month..date.end_of_month, :end => date.beginning_of_month..date.end_of_month)
+			starts_on_date = events.where(:start => date.beginning_of_month..date.end_of_month)
+			ends_on_date = events.where(:end => date.beginning_of_month..date.end_of_month)
+			between_date = events.where(:start => DateTime.new(0,1,1)..date.beginning_of_month)
+			between_date = between_date.where(:end => date.end_of_month..DateTime.new(10000,1,1))
+			(starts_on_date + ends_on_date + between_date).uniq
 		elsif(view_type == "week")
-			events = events.where("(start BETWEEN ? AND ?) OR (end BETWEEN ? AND ?) OR ((start <= ?) AND (end >= ?))", date.beginning_of_week-1, date.end_of_week-1, date.beginning_of_week-1, date.end_of_week-1, date.beginning_of_week-1, date.end_of_week-1)
+			#events = events.where("(start BETWEEN ? AND ?) OR (end BETWEEN ? AND ?) OR ((start <= ?) AND (end >= ?))", date.beginning_of_week-1, date.end_of_week-1, date.beginning_of_week-1, date.end_of_week-1, date.beginning_of_week-1, date.end_of_week-1)
 			#events = events.where(:start => date.beginning_of_week-1..date.end_of_week-1, :end => date.beginning_of_week-1..date.end_of_week-1)
+			starts_on_date = events.where(:start => date.beginning_of_week..date.end_of_week)
+			ends_on_date = events.where(:end => date.beginning_of_week..date.end_of_week)
+			between_date = events.where(:start => DateTime.new(0,1,1)..date.beginning_of_week)
+			between_date = between_date.where(:end => date.end_of_week..DateTime.new(10000,1,1))
+			(starts_on_date + ends_on_date + between_date).uniq
 		elsif(view_type == "day")
 			#events = events.where("(start BETWEEN ? AND ?) OR (end BETWEEN ? AND ?) OR ((start <= ?) AND (end >= ?))", date.beginning_of_day, date.end_of_day, date.beginning_of_day, date.end_of_day, date.beginning_of_day, date.end_of_day)
 			#events = events.where(:start => date.beginning_of_day..date.end_of_day, :end => date.beginning_of_day..date.end_of_day)
