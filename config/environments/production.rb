@@ -92,4 +92,7 @@ Rails.application.configure do
   config.action_mailer.perform_deliveries = true
   config.action_mailer.default_url_options = { host: 'cmsc128-eats.herokuapp.com'}
   config.action_mailer.delivery_method = :smtp
+  config.serve_static_assets = true
+  config.action_dispatch.x_sendfile_header = 'X-Accel-Redirect'
+  config.assets.compile = true
 end
