@@ -18,6 +18,7 @@ gem 'coffee-rails', '~> 4.1.0'
 gem 'bootstrap', '~> 4.0.0.alpha6'
 gem 'haml'
 gem 'pg', '~> 0.20'
+gem 'rails_12factor', group: :production
 
 # Use jquery as the JavaScript library
 gem 'jquery-rails'
