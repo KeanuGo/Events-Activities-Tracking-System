@@ -44,7 +44,6 @@ class EatsController < ApplicationController
 		}
 		@notifications.reverse!
 		acc_notifs.each{ |notif|
-			puts "#{notif.class}"
 			notif.is_read = true
 			notif.save!
 		}
@@ -79,7 +78,6 @@ class EatsController < ApplicationController
 			if(tags.length > 0)
 				tags.each{ |id|
 					if id.starts_with?("group_")
-						#puts "a group tag found! #{id.split("_")[1]}"
 						new_group_tag = GroupTag.new
 						new_group_tag.events_id = new_entry.id
 						new_group_tag.group_id = id.split("_")[1]
@@ -306,7 +304,6 @@ class EatsController < ApplicationController
 	
 	def changeToAdmin
 		membership = GroupMember.where(:group_id => params[:group_id], :accounts_id => session[:account]["id"])
-		puts "#{!membership.empty?} #{membership.first.is_admin}"
 		if(!membership.empty? and membership.first.is_admin)
 			gm = GroupMember.where(:group_id => params[:group_id], :accounts_id => params[:acc_id]).first
 			gm.is_admin = true
@@ -694,9 +691,7 @@ class EatsController < ApplicationController
 	
 	def translateContent(content)
 		ret = ""
-		puts "lololololol"
 		content.each{ |block|
-			#puts "#{block.instance_of?(Account)} ---- #{block.to_s}"
 			if(block.instance_of?(Account))
 				ret = ret + "#{getName(block.id)},#{block.id},acc|"
 			elsif(block.instance_of?(Group))
@@ -707,8 +702,6 @@ class EatsController < ApplicationController
 				ret = ret + "#{block}|"
 			end
 		}
-		puts "lololololol"
-		puts "#{ret}"
 		ret
 	end
 	
